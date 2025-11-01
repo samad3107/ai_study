@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto p-6 mt-12">
+    <h1 class="text-4xl font-bold text-cyan-400 mb-6 text-center">
+        Create Your Nexus Account
+    </h1>
+
+    <div class="futuristic-card p-8 rounded-xl shadow-lg">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="block text-gray-300 font-medium mb-2">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                    <p class="text-red-500 text-sm italic mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" 
+                    class="w-full py-3 bg-green-600 rounded-lg futuristic-glow hover:bg-green-500 transition duration-300 font-semibold text-white tracking-wider mt-4">
+                Sign Up & Launch
+            </button>
+        </form>
+    </div>
+
+    <div class="text-center mt-6">
+        <p class="text-gray-400">
+            Already registered? 
+            <a href="{% url 'login' %}" class="text-cyan-400 hover:underline">Log In</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Custom styling for all form inputs inside the card */
+    .futuristic-card input[type="text"],
+    .futuristic-card input[type="password"] {
+        @apply w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 futuristic-text;
+    }
+</style>
+{% endblock content %}

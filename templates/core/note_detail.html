@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 futuristic-card rounded-xl">
+    <h1 class="text-3xl font-bold text-cyan-400 mb-4">{{ note.title }}</h1>
+    <p class="text-gray-500 mb-6">Uploaded by {{ note.user.username }} on {{ note.uploaded_at|date:"F d, Y" }}</p>
+
+    <div class="p-4 bg-gray-800 rounded-lg">
+        <h2 class="text-xl font-semibold text-white mb-2">Summary Status:</h2>
+
+        {% if note.summary_text %}
+            <p class="text-green-400">✅ Summary Available:</p>
+            <div class="mt-4 futuristic-text whitespace-pre-wrap">{{ note.summary_text }}</div>
+        {% else %}
+            <p class="text-yellow-400">⏳ Note uploaded successfully. Waiting for AI processing...</p>
+            <p class="text-gray-400 mt-2">File: <a href="{{ note.pdf_file.url }}" target="_blank" class="text-cyan-400 hover:underline">{{ note.pdf_file.name }}</a></p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock content %}

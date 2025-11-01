@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto p-6 mt-12">
+    <h1 class="text-4xl font-bold text-cyan-400 mb-6 text-center">
+        Access Knowledge Nexus
+    </h1>
+
+    <div class="futuristic-card p-8 rounded-xl shadow-lg">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="p-3 mb-4 text-red-400 bg-red-900/50 rounded-lg border border-red-600">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="mb-4">
+                <label for="{{ form.username.id_for_label }}" class="block text-gray-300 font-medium mb-2">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-6">
+                <label for="{{ form.password.id_for_label }}" class="block text-gray-300 font-medium mb-2">Password</label>
+                {{ form.password }}
+            </div>
+            
+            <button type="submit" 
+                    class="w-full py-3 bg-cyan-600 rounded-lg futuristic-glow hover:bg-cyan-500 transition duration-300 font-semibold text-white tracking-wider">
+                Log In
+            </button>
+            
+            <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+    </div>
+
+    <div class="text-center mt-6">
+        <p class="text-gray-400">
+            Don't have an account? 
+            <a href="{% url 'register' %}" class="text-green-400 hover:underline">Register Here</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Add specific styling for Django's default input fields */
+    .futuristic-card input[type="text"],
+    .futuristic-card input[type="password"] {
+        @apply w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 futuristic-text;
+    }
+</style>
+{% endblock content %}

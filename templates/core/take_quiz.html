@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-cyan-400 mb-2">Quiz: {{ quiz.topic }}</h1>
+    <p class="text-gray-500 mb-6 border-b border-gray-700 pb-2">{{ question_data|length }} Questions to test your knowledge.</p>
+
+    <form method="POST" action="{% url 'grade_quiz' pk=quiz.pk %}">
+        {% csrf_token %}
+        
+        <div class="space-y-8">
+            {% for q in question_data %}
+            <div class="futuristic-card p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-semibold text-white mb-4">
+                    Q{{ forloop.counter }}. {{ q.text }}
+                </h2>
+
+                <div class="space-y-3">
+                    {% for option in q.options %}
+                    <label for="q_{{ q.id }}_{{ forloop.counter0 }}" class="flex items-center futuristic-text p-3 rounded-lg border border-gray-700 hover:bg-gray-800 transition duration-200 cursor-pointer">
+                        <input type="radio" 
+                               id="q_{{ q.id }}_{{ forloop.counter0 }}" 
+                               name="question_{{ q.id }}" 
+                               value="{{ forloop.counter0 }}" 
+                               required 
+                               class="mr-3 h-5 w-5 text-cyan-600 bg-gray-900 border-gray-600 focus:ring-cyan-500">
+                        <span>{{ option }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-10 text-center">
+            <button type="submit" class="py-3 px-12 bg-green-600 rounded-lg futuristic-glow hover:bg-green-500 transition duration-300 font-bold text-white tracking-widest text-lg">
+                Submit Quiz & Get Results 🚀
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

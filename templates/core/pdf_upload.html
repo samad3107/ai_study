@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-cyan-400 mb-6 border-b border-gray-700 pb-2">
+        PDF Note Summarizer
+    </h1>
+
+    <div class="futuristic-card p-8 rounded-xl shadow-lg">
+        <p class="text-gray-400 mb-6">
+            Upload your PDF notes below. Our AI will analyze the content and provide a focused, concise summary.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label for="{{ form.title.id_for_label }}" class="block text-gray-300 font-medium">Note Title</label>
+                <input type="text" 
+                       name="{{ form.title.name }}" 
+                       id="{{ form.title.id_for_label }}" 
+                       placeholder="Enter a title for your notes" 
+                       required
+                       class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 futuristic-text">
+                {% if form.title.errors %}
+                    <p class="text-red-500 text-sm italic mt-1">{{ form.title.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="space-y-2">
+                <label for="id_pdf_file" class="block text-gray-300 font-medium">Upload PDF Notes</label>
+                
+                <input type="file" 
+                       name="pdf_file" 
+                       id="id_pdf_file" 
+                       accept="application/pdf, .pdf" 
+                       required
+                       class="w-full text-gray-400 bg-gray-700 rounded-lg p-2 border border-gray-600"
+                >
+                
+                <p class="text-gray-500 text-sm">Max file size 50MB. Only PDF files allowed.</p>
+                
+                {% if form.pdf_file.errors %}
+                    <p class="text-red-500 text-sm italic mt-1">{{ form.pdf_file.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-cyan-600 rounded-lg futuristic-glow hover:bg-cyan-500 transition duration-300 font-semibold text-white tracking-wider">
+                Upload & Summarize
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock content %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-cyan-400 mb-6 border-b border-gray-700 pb-2">
+        AI Topic Explainer
+    </h1>
+
+    <div class="futuristic-card p-6 rounded-xl shadow-lg mb-8">
+        
+        <form method="POST" id="topic-form" class="flex flex-col space-y-4">
+            {% csrf_token %}
+            
+            <div class="w-full relative">
+                <label for="id_topic_name" class="sr-only">Topic Name</label>
+                <input type="text" name="topic_name" id="id_topic_name" placeholder="e.g., Quantum Entanglement, The Water Cycle..." required
+                       class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 futuristic-text">
+            </div>
+
+            <button type="button" 
+                    id="voice-input-btn" 
+                    aria-label="Start Voice Input"
+                    class="py-3 px-4 bg-red-600 rounded-lg hover:bg-red-700 transition duration-300 text-white futuristic-glow font-semibold flex items-center justify-center space-x-2 w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
+                    <path d="M5 0a3 3 0 0 0 3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z"/>
+                    <path d="M11 7.5V3a3 3 0 0 0-3-3V0a4 4 0 0 1 4 4v3.5a1 1 0 0 1-2 0zM5 0a4 4 0 0 1 4 4v3.5a1 1 0 0 1-2 0V4a3 3 0 0 0-3-3z"/>
+                </svg>
+                <span>Click to Speak Topic</span>
+            </button>
+
+            <button type="submit" class="py-3 px-6 bg-cyan-600 rounded-lg futuristic-glow hover:bg-cyan-500 transition duration-300 font-semibold text-white w-full">
+                Get Explanation
+            </button>
+        </form>
+        <p id="voice-status" class="text-xs text-center mt-2 text-gray-500"></p>
+    </div>
+    
+    <script>
+        const inputField = document.getElementById('id_topic_name');
+        const voiceBtn = document.getElementById('voice-input-btn');
+        const statusElement = document.getElementById('voice-status');
+        let recognition;
+        let isSupported = 'webkitSpeechRecognition' in window;
+
+        if (isSupported) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US'; 
+
+            recognition.onstart = function() {
+                 voiceBtn.classList.remove('bg-red-600');
+                 voiceBtn.classList.add('bg-red-900', 'futuristic-glow');
+                 voiceBtn.querySelector('span').textContent = 'Listening... Speak now.';
+                 statusElement.textContent = 'Recording active.';
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                inputField.value = transcript; 
+                statusElement.textContent = 'Speech recognized: ' + transcript;
+                resetIcon();
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                statusElement.textContent = 'Error: Try speaking clearly or check permissions.';
+                resetIcon();
+            };
+
+            recognition.onend = function() {
+                resetIcon();
+            };
+
+        } else {
+            voiceBtn.disabled = true;
+            voiceBtn.querySelector('span').textContent = 'Voice Not Supported';
+            statusElement.textContent = 'Voice input not supported in this browser.';
+        }
+
+        function resetIcon() {
+            voiceBtn.classList.remove('bg-red-900', 'futuristic-glow');
+            voiceBtn.classList.add('bg-red-600');
+            voiceBtn.querySelector('span').textContent = 'Click to Speak Topic';
+            if (statusElement.textContent === 'Recording active.') {
+                 statusElement.textContent = 'Ready for voice input.';
+            }
+        }
+
+        function startSpeechRecognition() {
+            if (isSupported) {
+                recognition.start();
+            }
+        }
+    </script>
+
+
+    {% if explanation_html %}
+    <div class="mt-8">
+        <h2 class="text-3xl font-semibold text-white mb-4 border-b border-cyan-800 pb-2">
+            Explanation for: <span class="text-cyan-400">{{ topic }}</span>
+        </h2>
+        
+        <div class="prose prose-invert max-w-none futuristic-text space-y-4">
+            {% autoescape off %}
+            {{ explanation_html }}
+            {% endautoescape %}
+        </div>
+        
+    </div>
+    {% endif %}
+
+</div>
+{% endblock content %}
